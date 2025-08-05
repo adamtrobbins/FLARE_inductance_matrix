@@ -12,18 +12,25 @@ class TransientResponse:
     def tindex(self, t):
         return np.abs(self.sol.t - t).argmin()
 
-    def calculate_field(self, tindex, r, z):
+    def calculate_field(self, tindex, r, z, activated_coils = None):
         currents = self.sol.y[:, tindex]
 
         Br = 0
         Bz = 0
 
-        for i in range(self.coil_system.NUM_COILS):
+        if activated_coils is None:
+            activated_coils = range(self.coil_system.NUM_COILS)
+        else:
+            activated_coils = self.coil_system.get_cindices(activated_coils)
+
+        for i in activated_coils:
             [coil_r, coil_z] = self.coil_system.coil_coords[i]
             z_delta = z - coil_z
 
-            Br += self.__calc_Br(currents[i], coil_r, r, z_delta)
-            Bz += self.__calc_Bz(currents[i], coil_r, r, z_delta)
+            inc_Br, inc_Bz = self.__calc_B(currents[i], coil_r, r, z_delta, spread = self.coil_system.coil_spreads[i])
+
+            Br += inc_Br
+            Bz += inc_Bz
 
         return Br, Bz
     
@@ -36,9 +43,23 @@ class TransientResponse:
 
         return Brs, Bzs
 
-    def __calc_Br(self, I, R, r, z_delta):
-        return ring_Br(I, R, z_delta, r)
+    def __calc_B(self, I, R, r, z_delta, spread = [np.nan, np.nan], N = 100):
+        if (np.isnan(I)):
+            return 0, 0
 
-    def __calc_Bz(self, I, R, r, z_delta):
-        return ring_Bz(I, R, z_delta, r)   
+        # Spread [z1, z2] gives range over which to spread out the coil from the center position, N the # of discretization points
+        zmin, zmax = spread
+        if np.isnan(zmin) or np.isnan(zmax):
+            return ring_Br(I, R, z_delta, r), ring_Bz(I, R, z_delta, r)
+        else:
+            Br = 0
+            Bz = 0
+            
+            z_vals = np.linspace(zmin, zmax, N)
+
+            for z in z_vals:
+                Br += ring_Br(I / N, R, z_delta + z, r)
+                Bz += ring_Bz(I / N, R, z_delta + z, r)
+
+            return Br, Bz
 

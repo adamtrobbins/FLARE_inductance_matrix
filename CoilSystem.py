@@ -8,6 +8,7 @@ class CoilSystem:
         self.R = np.loadtxt(f'{data_dir}/R.csv')
         self.coil_names = np.genfromtxt(f'{data_dir}/coil_names.csv', dtype=str)
         self.coil_coords = np.loadtxt(f'{data_dir}/coil_coords.csv', delimiter=',')
+        self.coil_spreads = np.loadtxt(f'{data_dir}/coil_spreads.csv', delimiter=',')
 
         if (len(set([len(self.L), len(self.R), len(self.coil_names), len(self.coil_coords)])) != 1):
             raise ValueError("Inconsistent # of coils in data files")
@@ -25,6 +26,9 @@ class CoilSystem:
     
     def get_cindex(self):
         return {name: idx for idx, name in enumerate(self.coil_names)}
+    
+    def get_cindices(self, coil_names):
+        return [self.get_cindex()[name] for name in coil_names]
 
     def __disable_coils(self):
         enabled_mask = self.enabled_mask
@@ -37,5 +41,8 @@ class CoilSystem:
         self.R = self.R[enabled_mask]
         self.coil_names = self.coil_names[enabled_mask]
         self.coil_coords = self.coil_coords[enabled_mask]
+        self.coil_spreads = self.coil_spreads[enabled_mask]
 
         self.NUM_COILS = len(self.R)
+
+        

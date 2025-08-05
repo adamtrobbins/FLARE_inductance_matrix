@@ -1,4 +1,4 @@
-# From Magnet Formulas, Eric Dennison
+# From Magnet Formulas 2018, Eric Dennison
 import numpy as np
 from scipy.special import ellipk, ellipe, ellipkm1
 from numpy import pi, sqrt, linspace
