@@ -1,10 +1,13 @@
+''' This class calculates the off-diagonal components of the inductance matrix for a system of coils. '''
+
 import numpy as np
 from scipy.integrate import dblquad
 
 class InductanceCalculator:
     def __init__(self, *, coil_system, initial_L):
         self.coil_system = coil_system
-        self.L = np.copy(initial_L) # this is assumed to have valid self-inductances but possibly wrong mutual inductances
+        self.L = np.copy(initial_L) 
+        # this is assumed to have valid self-inductances but possibly wrong mutual inductances (e.g. from moving coils about)
         self.N = self.coil_system.NUM_COILS
 
     def compute_L(self, write_loc):
