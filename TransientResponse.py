@@ -43,7 +43,7 @@ class TransientResponse:
 
         return Brs, Bzs
 
-    def __calc_B(self, I, R, r, z_delta, spread = [np.nan, np.nan], N = 100):
+    def __calc_B(self, I, R, r, z_delta, spread = [np.nan, np.nan], N = 20):
         if (np.isnan(I)):
             return 0, 0
 

@@ -14,7 +14,7 @@ k = lambda r, x, a: sqrt(4*al(r,a)/Q(r,x,a))       # k = f(radius, distance to m
 K = lambda k: ellipk(k**2.0)          # Elliptic integral, first kind, as a function of k
 E = lambda k: ellipe(k**2.0)          # Elliptic integral, second kind, as a function of k
 
-# On-Axis field = f(current and radius of loop, x of measurement point)
+
 def Baxial(I, R, z, u=uo):
     if R == 0:
         if z == 0:
@@ -23,8 +23,7 @@ def Baxial(I, R, z, u=uo):
             return 0.0
     else:
         return (u*I*R**2)/2.0/(R**2 + z**2)**(1.5)
-
-# Axial field component = f(current and radius of loop, r and x of meas. point)
+    
 def ring_Bz(I, R, z, r):
     if r == 0:
         if z == 0:
@@ -36,7 +35,6 @@ def ring_Bz(I, R, z, r):
             (E(k(r,z,R))*((1.0-al(r,R)**2-be(z,R)**2)/(Q(r,z,R)-4*al(r,R))) + K(k(r,z,R)))\
             /pi/sqrt(Q(r,z,R))
         
-# Radial field component = f(current and radius of loop, r and x of meas. point)
 def ring_Br(I, R, z, r):
     if r == 0:
         return 0                   # no radial component on axis!
